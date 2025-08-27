@@ -1,0 +1,89 @@
+﻿@model IEnumerable<ABCRetailers.Models.Product>
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="fas fa-box"></i> Products</h2>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="fas fa-plus"></i> Add Product
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Image</th>
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th class="text-end">Price</th>
+            <th class="text-center">Stock</th>
+            <th style="width: 160px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">No products found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center" style="width:120px;">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" class="img-thumbnail" style="width:100px; height:100px; object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <i class="fas fa-image fa-2x text-muted"></i>
+                        }
+                    </td>
+                    <td>@item.ProductId</td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Description</td>
+                    <td class="text-end">$@item.Price.ToString("F2")</td>
+                    <td class="text-center">
+                        @if (item.StockAvailable > 10)
+                        {
+                            <span class="badge bg-success">@item.StockAvailable</span>
+                        }
+                        else if (item.StockAvailable > 0)
+                        {
+                            <span class="badge bg-warning">@item.StockAvailable</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Out</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-sm btn-primary me-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@item.ProductId" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this product?');">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

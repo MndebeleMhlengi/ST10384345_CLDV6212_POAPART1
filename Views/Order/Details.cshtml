@@ -1,0 +1,57 @@
+﻿@model ABCRetailers.Models.Order
+@using System.IO
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm rounded-lg border-0">
+        <div class="card-header bg-primary text-white rounded-top-lg">
+            <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Details</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4">Order #@Model.OrderId</h5>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-user me-2 text-primary"></i>Customer Information</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Name:</strong> @Model.Username</li>
+                        <li class="list-group-item"><strong>Customer ID:</strong> @Model.CustomerId</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="fas fa-box-open me-2 text-success"></i>Product Information</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Product:</strong> @Model.ProductName</li>
+                        <li class="list-group-item"><strong>Product ID:</strong> @Model.ProductId</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-receipt me-2 text-info"></i>Pricing & Quantity</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Unit Price:</strong> @string.Format("{0:C}", Model.UnitPrice)</li>
+                        <li class="list-group-item"><strong>Quantity:</strong> @Model.Quantity</li>
+                        <li class="list-group-item"><strong>Total Price:</strong> <span class="text-success fw-bold">@string.Format("{0:C}", Model.TotalPrice)</span></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="fas fa-clock me-2 text-secondary"></i>Order Status & Dates</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Status:</strong> <span class="badge bg-secondary">@Model.Status</span></li>
+                        <li class="list-group-item"><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd")</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a asp-action="Index" class="btn btn-secondary px-4 rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

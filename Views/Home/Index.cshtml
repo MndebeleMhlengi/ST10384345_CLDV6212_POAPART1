@@ -1,0 +1,175 @@
+﻿@model ABCRetailers.Models.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Welcome Section -->
+<div class="jumbotron bg-light p-5 rounded-3 mb-4">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Welcome to ABC Retails</h1>
+        <p class="col-md-8 fs-4">Your complete retail management solution powered by Azure Cloud Services.</p>
+        <div class="row mt-4">
+            <div class="col-md-3 mb-2">
+                <a class="btn btn-primary btn-lg w-100" asp-controller="Customer" asp-action="Index" role="button">
+                    <i class="fas fa-users fa-2x d-block mb-2"></i>
+                    Manage Customers
+                </a>
+            </div>
+            <div class="col-md-3 mb-2">
+                <a class="btn btn-success btn-lg w-100" asp-controller="Product" asp-action="Index" role="button">
+                    <i class="fas fa-box fa-2x d-block mb-2"></i>
+                    Manage Products
+                </a>
+            </div>
+            <div class="col-md-3 mb-2">
+                <a class="btn btn-warning btn-lg w-100" asp-controller="Order" asp-action="Index" role="button">
+                    <i class="fas fa-shopping-cart fa-2x d-block mb-2"></i>
+                    Manage Orders
+                </a>
+            </div>
+            <div class="col-md-3 mb-2">
+                <a class="btn btn-info btn-lg w-100" asp-controller="Upload" asp-action="Index" role="button">
+                    <i class="fas fa-upload fa-2x d-block mb-2"></i>
+                    Upload Files
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-header">
+                <i class="fas fa-users"></i> Customers
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">@Model.CustomerCount</h4>
+                <p class="card-text">Total registered customers</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Customer" asp-action="Create" class="text-white">
+                    <i class="fas fa-plus"></i> Add New Customer
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-header">
+                <i class="fas fa-box"></i> Products
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">@Model.ProductCount</h4>
+                <p class="card-text">Products in catalog</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Product" asp-action="Create" class="text-white">
+                    <i class="fas fa-plus"></i> Add New Product
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-header">
+                <i class="fas fa-shopping-cart"></i> Orders
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">@Model.OrderCount</h4>
+                <p class="card-text">Total orders placed</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Order" asp-action="Create" class="text-white">
+                    <i class="fas fa-plus"></i> Create New Order
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-header">
+                <i class="fas fa-cloud"></i> Azure Services
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">4</h4>
+                <p class="card-text">Active Azure services</p>
+            </div>
+            <div class="card-footer">
+                <small>Tables • Blobs • Queues • Files</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Products Section -->
+@if (Model.FeaturedProducts.Any())
+{
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-star text-warning"></i> Featured Products
+            </h2>
+            <div class="row">
+                @foreach (var product in Model.FeaturedProducts)
+                {
+                    <div class="col-md-4 col-lg-2 mb-4">
+                        <div class="card h-100">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" class="card-img-top" alt="@product.ProductName" style="height: 150px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">@product.ProductName</h6>
+                                <p class="card-text flex-grow-1">
+                                    <small class="text-muted">@product.Description.Substring(0, Math.Min(60, product.Description.Length))@(product.Description.Length > 60 ? "..." : "")</small>
+                                </p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong class="text-success">$@product.Price.ToString("F2")</strong>
+                                        @if (product.StockAvailable > 0)
+                                        {
+                                            <span class="badge bg-success">@product.StockAvailable in stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Out of Stock</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary">
+                    View All Products <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <h4>No Products Available</h4>
+                <p>Start by adding some products to your catalog.</p>
+                <a asp-controller="Product" asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Your First Product
+                </a>
+            </div>
+        </div>
+    </div>
+}

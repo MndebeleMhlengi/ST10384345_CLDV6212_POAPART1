@@ -1,0 +1,164 @@
+﻿@model ABCRetailers.Models.Customer
+
+@{
+    ViewData["Title"] = "Create Customer";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-user-plus"></i> Add New Customer</h4>
+                <p class="mb-0 text-muted">Enter customer information to create a new account</p>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" data-autosave id="createCustomerForm">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="CustomerId" class="form-label">
+                            <i class="fas fa-id-badge text-primary"></i> Customer ID
+                        </label>
+                        <input asp-for="CustomerId" class="form-control" placeholder="Enter unique customer ID">
+                        <span asp-validation-for="CustomerId" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Must be unique across all customers
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Name" class="form-label">
+                                    <i class="fas fa-user text-success"></i> First Name
+                                </label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter first name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Surname" class="form-label">
+                                    <i class="fas fa-user text-success"></i> Last Name
+                                </label>
+                                <input asp-for="Surname" class="form-control" placeholder="Enter last name">
+                                <span asp-validation-for="Surname" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label">
+                            <i class="fas fa-at text-info"></i> Username
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">@@</span>
+                            <input asp-for="Username" class="form-control" placeholder="Enter username">
+                        </div>
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Will be used for customer login and identification
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope text-warning"></i> Email Address
+                        </label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Used for order confirmations and communication
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ShippingAddress" class="form-label">
+                            <i class="fas fa-map-marker-alt text-danger"></i> Shipping Address
+                        </label>
+                        <textarea asp-for="ShippingAddress" class="form-control" rows="3"
+                                  placeholder="Enter complete shipping address including street, city, state, and postal code"></textarea>
+                        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-truck"></i> This will be the default shipping address for orders
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Customers
+                        </a>
+                        <div>
+                            <button type="reset" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-undo"></i> Reset Form
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Create Customer
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6><i class="fas fa-question-circle"></i> Customer Creation Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Required Information</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> Unique Customer ID</li>
+                            <li><i class="fas fa-check text-success"></i> First and Last Name</li>
+                            <li><i class="fas fa-check text-success"></i> Valid Email Address</li>
+                            <li><i class="fas fa-check text-success"></i> Complete Shipping Address</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">Best Practices</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-lightbulb text-warning"></i> Use meaningful Customer IDs</li>
+                            <li><i class="fas fa-lightbulb text-warning"></i> Verify email addresses</li>
+                            <li><i class="fas fa-lightbulb text-warning"></i> Include postal codes</li>
+                            <li><i class="fas fa-lightbulb text-warning"></i> Double-check all information</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function() {
+            // Auto-generate username from name and surname
+            $('#Name, #Surname').on('input', function() {
+                if ($('#Username').val() === '') {
+                    var firstName = $('#Name').val().toLowerCase();
+                    var lastName = $('#Surname').val().toLowerCase();
+                    if (firstName && lastName) {
+                        $('#Username').val(firstName + '.' + lastName);
+                    }
+                }
+            });
+
+            // Auto-generate customer ID
+            $('#Name, #Surname').on('input', function() {
+                if ($('#CustomerId').val() === '') {
+                    var firstName = $('#Name').val().toUpperCase().substring(0, 2);
+                    var lastName = $('#Surname').val().toUpperCase().substring(0, 2);
+                    var timestamp = Date.now().toString().slice(-6);
+
+                    if (firstName && lastName) {
+                        $('#CustomerId').val(firstName + lastName + timestamp);
+                    }
+                }
+            });
+        });
+    </script>
+}

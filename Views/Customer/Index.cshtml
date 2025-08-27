@@ -1,0 +1,149 @@
+﻿@model IEnumerable<ABCRetailers.Models.Customer>
+@using System.Linq
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-users text-primary"></i> Customer Management</h2>
+    <a asp-action="Create" class="btn btn-primary btn-lg">
+        <i class="fas fa-plus"></i> Add New Customer
+    </a>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="search-filter-bar">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control search-input" placeholder="Search customers..." data-target="#customerTable tbody tr">
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <small class="text-muted">Total Customers: <strong>@Model.Count()</strong></small>
+        </div>
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fas fa-table"></i> Customer List</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="customerTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable"><i class="fas fa-id-badge"></i> Customer ID</th>
+                            <th class="sortable"><i class="fas fa-user"></i> Name</th>
+                            <th class="sortable"><i class="fas fa-at"></i> Username</th>
+                            <th class="sortable"><i class="fas fa-envelope"></i> Email</th>
+                            <th class="sortable"><i class="fas fa-map-marker-alt"></i> Shipping Address</th>
+                            <th width="150"><i class="fas fa-cogs"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var customer in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <code>@customer.CustomerId</code>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                                             style="width: 40px; height: 40px;">
+                                            @customer.Name.FirstOrDefault()@customer.Surname.FirstOrDefault()
+                                        </div>
+                                        <div>
+                                            <strong>@customer.Name @customer.Surname</strong>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@customer.Username</span>
+                                </td>
+                                <td>
+                                    <a href="mailto:@customer.Email" class="text-decoration-none">
+                                        <i class="fas fa-envelope text-muted me-1"></i>@customer.Email
+                                    </a>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        @(customer.ShippingAddress.Length > 50 ?
+                                            customer.ShippingAddress.Substring(0, 50) + "..." :
+                                            customer.ShippingAddress)
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Edit" asp-route-id="@customer.CustomerId"
+                                           class="btn btn-outline-primary" title="Edit Customer">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger delete-btn"
+                                                data-customer-id="@customer.CustomerId"
+                                                data-customer-name="@customer.Name @customer.Surname"
+                                                title="Delete Customer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <div class="card">
+            <div class="card-body">
+                <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                <h3>No Customers Found</h3>
+                <p class="text-muted">Start building your customer base by adding your first customer.</p>
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i> Add Your First Customer
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Delete customer confirmation
+            $('.delete-btn').click(function() {
+                var customerId = $(this).data('customer-id');
+                var customerName = $(this).data('customer-name');
+
+                if (confirm('Are you sure you want to delete customer "' + customerName + '"? This action cannot be undone.')) {
+                    // Create and submit delete form
+                    var form = $('<form>', {
+                        method: 'POST',
+                        action: '@Url.Action("Delete")'
+                    }).append($('<input>', {
+                        type: 'hidden',
+                        name: 'id',
+                        value: customerId
+                    })).append($('<input>', {
+                        type: 'hidden',
+                        name: '__RequestVerificationToken',
+                        value: $('input[name="__RequestVerificationToken"]').val()
+                    }));
+
+                    $('body').append(form);
+                    form.submit();
+                }
+            });
+        });
+    </script>
+}

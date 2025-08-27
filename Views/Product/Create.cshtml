@@ -1,0 +1,165 @@
+﻿@model ABCRetailers.Models.ViewModels.ProductCreateViewModel
+@{
+    ViewData["Title"] = "Create Product";
+}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus-square text-success"></i> Add New Product
+                </h5>
+                <small class="text-muted">Create a new product for your catalog</small>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data" id="createProductForm">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="ProductId" class="form-label">
+                            <i class="fas fa-barcode text-primary"></i> Product ID
+                        </label>
+                        <input asp-for="ProductId" class="form-control" placeholder="Enter unique product ID" />
+                        <small class="form-text text-muted">Must be unique across all products (e.g., SKU, UPC)</small>
+                        <span asp-validation-for="ProductId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ProductName" class="form-label">
+                            <i class="fas fa-tag text-success"></i> Product Name
+                        </label>
+                        <input asp-for="ProductName" class="form-control" placeholder="Enter product name" />
+                        <small class="form-text text-muted">Clear, descriptive name that customers will see</small>
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            <i class="fas fa-align-left text-info"></i> Description
+                        </label>
+                        <textarea asp-for="Description" rows="4" class="form-control"
+                                  placeholder="Enter detailed product description including features, specifications, and benefits"></textarea>
+                        <small class="form-text text-muted">Detailed description helps customers make informed decisions</small>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Price" class="form-label">
+                                <i class="fas fa-dollar-sign text-success"></i> Price
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Price" type="number" step="0.01" class="form-control" value="0.00" />
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="StockAvailable" class="form-label">
+                                <i class="fas fa-cubes text-warning"></i> Initial Stock
+                            </label>
+                            <input asp-for="StockAvailable" type="number" min="0" class="form-control" />
+                            <span asp-validation-for="StockAvailable" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ProductImageFile" class="form-label">
+                            <i class="fas fa-camera text-primary"></i> Product Image
+                        </label>
+                        <div class="border border-dashed p-3 text-center bg-light">
+                            <input asp-for="ProductImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                            <small class="form-text text-muted">PNG, JPG, JPEG up to 5MB</small>
+                        </div>
+                        <span asp-validation-for="ProductImageFile" class="text-danger"></span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Products
+                        </a>
+                        <div>
+                            <button type="reset" class="btn btn-warning me-2">
+                                <i class="fas fa-undo"></i> Reset Form
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Create Product
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-light">
+                <i class="fas fa-eye"></i> Product Preview
+            </div>
+            <div class="card-body text-center">
+                <div id="previewImageContainer" class="border border-dashed bg-light mb-2 d-flex align-items-center justify-content-center"
+                     style="height: 180px;">
+                    <i class="fas fa-image fa-2x text-muted"></i>
+                </div>
+                <h5 id="previewName" class="fw-bold">Product Name</h5>
+                <p id="previewDescription" class="text-muted small">Product description will appear here...</p>
+                <h6 id="previewPrice" class="text-success fw-bold">$0.00</h6>
+                <span id="previewStock" class="badge bg-secondary">0 in stock</span>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <i class="fas fa-lightbulb"></i> Product Creation Tips
+            </div>
+            <div class="card-body">
+                <h6 class="text-success">Best Practices</h6>
+                <ul class="small text-muted mb-2">
+                    <li>✔ Use clear, descriptive product names</li>
+                    <li>✔ Include detailed descriptions</li>
+                    <li>✔ Set competitive pricing</li>
+                    <li>✔ Upload high-quality images</li>
+                    <li>✔ Set realistic stock levels</li>
+                </ul>
+                <h6 class="text-warning">Requirements</h6>
+                <ul class="small text-muted">
+                    <li>⚠ Product ID must be unique</li>
+                    <li>⚠ Price must be greater than 0</li>
+                    <li>⚠ Stock cannot be negative</li>
+                    <li>⚠ All fields are required</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Live preview updates
+        const nameInput = document.getElementById("ProductName");
+        const descInput = document.getElementById("Description");
+        const priceInput = document.getElementById("Price");
+        const stockInput = document.getElementById("StockAvailable");
+        nameInput?.addEventListener("input", () => {
+            document.getElementById("previewName").innerText = nameInput.value || "Product Name";
+        });
+        descInput?.addEventListener("input", () => {
+            document.getElementById("previewDescription").innerText = descInput.value || "Product description will appear here...";
+        });
+        priceInput?.addEventListener("input", () => {
+            document.getElementById("previewPrice").innerText = `$${(priceInput.value || 0).toFixed(2)}`;
+        });
+        stockInput?.addEventListener("input", () => {
+            document.getElementById("previewStock").innerText = `${stockInput.value || 0} in stock`;
+        });
+        // Image preview
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const container = document.getElementById("previewImageContainer");
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    container.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 180px; object-fit: cover;" />`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                container.innerHTML = `<i class="fas fa-image fa-2x text-muted"></i>`;
+            }
+        }
+    </script>
+}
